@@ -11,6 +11,9 @@ import android.view.MotionEvent;
 
 import java.util.ArrayList;
 
+// Snake will be designed in composite pattern
+
+
 class Snake {
 
     // The location in the grid of all the segments
