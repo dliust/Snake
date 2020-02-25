@@ -20,11 +20,13 @@ class Apple {
     private Point mSpawnRange;
     private int mSize;
 
+    private boolean good;
+
     // An image to represent the apple
     private Bitmap mBitmapApple;
 
     /// Set up the apple in the constructor
-    Apple(Context context, Point sr, int s){
+    Apple(Context context, Point sr, int s, boolean good){
 
         // Make a note of the passed in spawn range
         mSpawnRange = sr;
@@ -34,11 +36,18 @@ class Apple {
         location.x = -10;
 
         // Load the image to the bitmap
-        mBitmapApple = BitmapFactory.decodeResource(context.getResources(), R.drawable.apple);
-
+        if (good == true) {
+            mBitmapApple = BitmapFactory.decodeResource(context.getResources(), R.drawable.apple);
+        }
+        else { //good == false
+            mBitmapApple = BitmapFactory.decodeResource(context.getResources(), R.drawable.badapple);
+        }
         // Resize the bitmap
-        mBitmapApple = Bitmap.createScaledBitmap(mBitmapApple, s, s, false);
+
+            mBitmapApple = Bitmap.createScaledBitmap(mBitmapApple, s, s, false);
     }
+
+
 
     // This is called every time an apple is eaten
     void spawn(){
