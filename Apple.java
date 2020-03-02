@@ -26,6 +26,7 @@ class Apple {
     private Bitmap mBitmapApple;
 
     /// Set up the apple in the constructor
+
     Apple(Context context, Point sr, int s, boolean good){
 
         // Make a note of the passed in spawn range
@@ -39,7 +40,7 @@ class Apple {
         if (good == true) {
             mBitmapApple = BitmapFactory.decodeResource(context.getResources(), R.drawable.apple);
         }
-        else { //good == false
+        if (good == false) {
             mBitmapApple = BitmapFactory.decodeResource(context.getResources(), R.drawable.badapple);
         }
         // Resize the bitmap
@@ -57,11 +58,16 @@ class Apple {
         location.y = random.nextInt(mSpawnRange.y - 1) + 1;
     }
 
+    void remove() {
+        location.x = -10;
+        location.y = -10;
+    }
     // Let SnakeGame know where the apple is
     // SnakeGame can share this with the snake
     Point getLocation(){
         return location;
     }
+
 
     // Draw the apple
     void draw(Canvas canvas, Paint paint){

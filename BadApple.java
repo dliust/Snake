@@ -9,8 +9,8 @@ import android.graphics.Point;
 import java.util.Random;
 
 public class BadApple extends Apple {
-    BadApple(Context context, Point sr, int s) {
-        super(context, sr, s);
+    BadApple(Context context, Point sr, int s, boolean good) {
+        super(context, sr, s, good);
     }
 
     //change draw method with new png file

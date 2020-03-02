@@ -15,11 +15,13 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import java.util.ArrayList;
+import java.util.Random;
 
 import java.io.IOException;
 
 class SnakeGame extends SurfaceView implements Runnable{
 
+    private Context context;
     // Objects for the game loop/thread
     private Thread mThread = null;
     // Control pausing between updates
@@ -45,10 +47,14 @@ class SnakeGame extends SurfaceView implements Runnable{
     private SurfaceHolder mSurfaceHolder;
     private Paint mPaint;
 
+    private int blockSize;
     // A snake ssss
     private Snake mSnake;
     // And apples
-    private Apple mApple;
+    private Apple mApple, apple1, apple2, apple3, apple4, apple5;
+    private Apple badApple1, badApple2, badApple3, badApple4, badApple5;
+
+    private ArrayList<Apple> appleList, bAppleList;
 
     // This is the constructor method that gets called
     // from SnakeActivity
@@ -93,11 +99,36 @@ class SnakeGame extends SurfaceView implements Runnable{
         mSurfaceHolder = getHolder();
         mPaint = new Paint();
 
-        // Call the constructors of our two game objects
-        mApple = new Apple(context,
-                new Point(NUM_BLOCKS_WIDE,
-                        mNumBlocksHigh),
-                blockSize, true);
+        // Call the constructors of our three game objects
+        mApple = new AppleBuilder(context).setSpawnRange(new Point(NUM_BLOCKS_WIDE,
+                mNumBlocksHigh)).setSize(blockSize).setGood(true).build();
+        apple1 = new AppleBuilder(context).setSpawnRange(new Point(NUM_BLOCKS_WIDE,
+                mNumBlocksHigh)).setSize(blockSize).setGood(true).build();
+        apple2 = new AppleBuilder(context).setSpawnRange(new Point(NUM_BLOCKS_WIDE,
+                mNumBlocksHigh)).setSize(blockSize).setGood(true).build();
+        apple3 = new AppleBuilder(context).setSpawnRange(new Point(NUM_BLOCKS_WIDE,
+                mNumBlocksHigh)).setSize(blockSize).setGood(true).build();
+        apple4 = new AppleBuilder(context).setSpawnRange(new Point(NUM_BLOCKS_WIDE,
+                mNumBlocksHigh)).setSize(blockSize).setGood(true).build();
+        apple5 = new AppleBuilder(context).setSpawnRange(new Point(NUM_BLOCKS_WIDE,
+                mNumBlocksHigh)).setSize(blockSize).setGood(true).build();
+
+        appleList = new ArrayList<>();
+        appleList.add(apple1); appleList.add(apple2); appleList.add(apple3); appleList.add(apple4); appleList.add(apple5);
+
+        badApple1 = new AppleBuilder(context).setSpawnRange(new Point(NUM_BLOCKS_WIDE,
+                mNumBlocksHigh)).setSize(blockSize).setGood(false).build();
+        badApple2 = new AppleBuilder(context).setSpawnRange(new Point(NUM_BLOCKS_WIDE,
+                mNumBlocksHigh)).setSize(blockSize).setGood(false).build();
+        badApple3 = new AppleBuilder(context).setSpawnRange(new Point(NUM_BLOCKS_WIDE,
+                mNumBlocksHigh)).setSize(blockSize).setGood(false).build();
+        badApple4 = new AppleBuilder(context).setSpawnRange(new Point(NUM_BLOCKS_WIDE,
+                mNumBlocksHigh)).setSize(blockSize).setGood(false).build();
+        badApple5 = new AppleBuilder(context).setSpawnRange(new Point(NUM_BLOCKS_WIDE,
+                mNumBlocksHigh)).setSize(blockSize).setGood(false).build();
+
+        bAppleList =  new ArrayList<>();
+        bAppleList.add(badApple1); bAppleList.add(badApple2); bAppleList.add(badApple3); bAppleList.add(badApple4); bAppleList.add(badApple5);
 
         mSnake = new Snake(context,
                 new Point(NUM_BLOCKS_WIDE,
@@ -112,6 +143,18 @@ class SnakeGame extends SurfaceView implements Runnable{
 
         // reset the snake
         mSnake.reset(NUM_BLOCKS_WIDE, mNumBlocksHigh);
+
+        apple1.remove();
+        apple2.remove();
+        apple3.remove();
+        apple4.remove();
+        apple5.remove();
+
+        badApple1.remove();
+        badApple2.remove();
+        badApple3.remove();
+        badApple4.remove();
+        badApple5.remove();
 
         // Get the apple ready for dinner
         mApple.spawn();
@@ -167,26 +210,47 @@ class SnakeGame extends SurfaceView implements Runnable{
 
     // Update all the game objects
     public void update() {
-
+        Random rand = new Random();
+        int count = 0;
+        int points = rand.nextInt(3);
+        int bad = rand.nextInt(5);
         // Move the snake
         mSnake.move();
 
         // Did the head of the snake eat the apple?
-        if(mSnake.checkDinner(mApple.getLocation())){
-            // This reminds me of Edge of Tomorrow.
-            // One day the apple will be ready!
-            // Add way to spawn more than one apple
-            // Spawn bad apples 20% of the time
-            mApple.spawn();
+        if(mSnake.checkDinner(mApple.getLocation())) {
+            if (mScore < 5) {
+                mApple.spawn();
+                mScore = mScore + 1 + points;
 
-            // Add to  mScore
-            // Make it add random from 1-3
-            // Make bad apples deduct points
-            mScore = mScore + 1;
-
-            // Play a sound
-            mSP.play(mEat_ID, 1, 1, 0, 0, 1);
+                mSP.play(mEat_ID, 1, 1, 0, 0, 1);
+            }
+            else {
+                mApple.spawn();
+                mSP.play(mEat_ID, 1, 1, 0, 0, 1);
+                count = mScore/5;
+                for (int i = 0; i < count; i++) {
+                    if (bad == 1) {
+                        bAppleList.get(i).spawn();
+                    }
+                    else {
+                        appleList.get(i).spawn();
+                    }
+                }
+                for (int j = 0; j < 5; j++) {
+                    if(mSnake.checkDinner(bAppleList.get(j).getLocation())) {
+                        mScore = mScore - 2;
+                    }
+                    if(mSnake.checkDinner(appleList.get(j).getLocation())) {
+                        mScore = mScore + 1 + points;
+                    }
+                }
+            }
         }
+
+
+
+
 
         // Did the snake die?
         if (mSnake.detectDeath()) {
@@ -215,8 +279,20 @@ class SnakeGame extends SurfaceView implements Runnable{
             // Draw the score
             mCanvas.drawText("" + mScore, 20, 120, mPaint);
 
-            // Draw the apple and the snake
+            // Draw the apples and the snake
             mApple.draw(mCanvas, mPaint);
+            apple1.draw(mCanvas, mPaint);
+            apple2.draw(mCanvas, mPaint);
+            apple3.draw(mCanvas, mPaint);
+            apple4.draw(mCanvas, mPaint);
+            apple5.draw(mCanvas, mPaint);
+
+            badApple1.draw(mCanvas,mPaint);
+            badApple2.draw(mCanvas,mPaint);
+            badApple3.draw(mCanvas,mPaint);
+            badApple4.draw(mCanvas,mPaint);
+            badApple5.draw(mCanvas,mPaint);
+
             mSnake.draw(mCanvas, mPaint);
 
             // Draw some text while paused

@@ -11,4 +11,5 @@ public interface IAppleBuilder {
     public void setSpawnRange(Point spawnRange);
     public void setLocation(Point location);
     public void setSize(int size);
+    public void setGood(boolean good);
 }

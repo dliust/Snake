@@ -7,12 +7,16 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Point;
 
-public class AppleBuilder implements IAppleBuilder {
-    private Context context;
+public class AppleBuilder {
+    private final Context context;
     private Point location = new Point();
     private Point spawnRange;
     private int size;
     private boolean good;
+
+    AppleBuilder(Context context) {
+        this.context = context;
+    }
 
     AppleBuilder(Context context, Point sr, int s, boolean good) {
         this.context = context;
@@ -22,19 +26,23 @@ public class AppleBuilder implements IAppleBuilder {
         this.good = good;
     }
 
-    public void setLocation(Point location) {
+    public AppleBuilder setLocation(Point location) {
         this.location = location;
+        return this;
     }
-    public void setSpawnRange(Point spawnRange) {
+    public AppleBuilder setSpawnRange(Point spawnRange) {
         this.spawnRange = spawnRange;
+        return this;
     }
 
-    public void setSize(int size) {
+    public AppleBuilder setSize(int size) {
         this.size = size;
+        return this;
     }
 
-    public void setGood(boolean good) {
+    public AppleBuilder setGood(boolean good) {
         this.good = good;
+        return this;
     }
 
     public Apple build() {

@@ -260,6 +260,8 @@ class Snake {
     }
 
 
+
+
     // Handle changing direction
     void switchHeading(MotionEvent motionEvent) {
 
